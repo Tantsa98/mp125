@@ -22,7 +22,31 @@
   let currentImages = [];
   let currentIndex = 0;
   let categoryData = [];
+  let allMedia = [];
 
+  // ------------------------------
+  // LOAD LIST OF FILES FROM /images/
+  // ------------------------------
+  async function loadMediaList() {
+    try {
+      const r = await fetch("images/"); // GitHub Pages дає HTML-лістинг
+      const text = await r.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, "text/html");
+
+      return [...doc.querySelectorAll("a")]
+        .map(a => a.getAttribute("href"))
+        .filter(f => f && f.match(/\.(png|jpg|jpeg|webp|mp4)$/i));
+    } catch (e) {
+      console.error("Помилка завантаження списку медіа:", e);
+      return [];
+    }
+  }
+
+
+  // ------------------------------
+  // SHOW / HIDE POPUP
+  // ------------------------------
   function setOverlayVisible(visible){
     if(visible){
       overlay.classList.remove('hidden');
@@ -33,6 +57,10 @@
     }
   }
 
+
+  // ------------------------------
+  // FILTERS
+  // ------------------------------
   function renderFilters(types){
     if(!filtersRoot) return;
     filtersRoot.innerHTML = '';
@@ -60,6 +88,10 @@
     return data.filter(d => selected.includes(d.Type));
   }
 
+
+  // ------------------------------
+  // GALLERY
+  // ------------------------------
   function renderGallery(data){
     galleryRoot.innerHTML = '';
     if(!data.length){
@@ -74,43 +106,61 @@
       card.setAttribute('role','button');
       card.innerHTML = `<h3>${item.Name}</h3><p class="type">${item.Type}</p>`;
       card.addEventListener('click', () => openModal(item));
-      card.addEventListener('keydown', (e) => { if(e.key==='Enter') openModal(item); });
+      card.addEventListener('keydown', e => { if(e.key==='Enter') openModal(item); });
       frag.appendChild(card);
     });
     galleryRoot.appendChild(frag);
   }
 
-  function openModal(item){
-    // populate text fields
+
+  // ------------------------------
+  // OPEN MODAL & LOAD IMAGES
+  // ------------------------------
+  async function openModal(item){
+    if (!allMedia.length) allMedia = await loadMediaList();
+
     mName.textContent = item.Name || '';
     mType.textContent = item.Type || '';
     mAff.textContent = item.Affiliation || '';
     mDesc.textContent = item.Desc || '';
 
-    // images
-    const imgsRaw = item.imgId || '';
-    currentImages = imgsRaw.split(';').map(s => s.trim()).filter(Boolean);
+    const imgId = (item.imgId || "").trim().toLowerCase();
+
+    // вибір файлів: prefix === imgId
+    currentImages = allMedia.filter(filename => {
+      const lower = filename.toLowerCase();
+      if (!lower.includes("#")) return false;
+      const prefix = lower.split("#")[0];
+      return prefix === imgId;
+    });
+
     currentIndex = 0;
     updateCarousel();
     setOverlayVisible(true);
   }
 
+
+  // ------------------------------
+  // CAROUSEL
+  // ------------------------------
   function updateCarousel(){
     if(!currentImages.length){
       carouselImg.src = '';
-      carouselImg.alt = 'Без зображень';
+      carouselImg.alt = 'Без медіа';
       imgCount.textContent = '0 / 0';
       prevBtn.style.display = 'none';
       nextBtn.style.display = 'none';
       return;
     }
-    // By default images are in /images/
+
     const src = 'images/' + currentImages[currentIndex];
     carouselImg.src = src;
     carouselImg.alt = currentImages[currentIndex];
+
     imgCount.textContent = (currentIndex+1) + ' / ' + currentImages.length;
-    prevBtn.style.display = (currentImages.length>1 ? 'block' : 'none');
-    nextBtn.style.display = (currentImages.length>1 ? 'block' : 'none');
+
+    prevBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
+    nextBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
   }
 
   function prevImage(){
@@ -125,8 +175,13 @@
     updateCarousel();
   }
 
+
+  // ------------------------------
+  // EVENTS
+  // ------------------------------
   function attachEvents(){
     if(!filtersRoot) return;
+
     filtersRoot.addEventListener('change', () => {
       const selected = getSelectedTypes();
       const filtered = filterByTypes(categoryData, selected);
@@ -139,26 +194,31 @@
     });
 
     if(closeModal) closeModal.addEventListener('click', () => setOverlayVisible(false));
-    if(overlay) overlay.addEventListener('click', (e) => { if(e.target === overlay) setOverlayVisible(false); });
+    if(overlay) overlay.addEventListener('click', e => { if(e.target === overlay) setOverlayVisible(false); });
 
-    if(prevBtn) prevBtn.addEventListener('click', prevImage);
-    if(nextBtn) nextBtn.addEventListener('click', nextImage);
+    prevBtn.addEventListener('click', prevImage);
+    nextBtn.addEventListener('click', nextImage);
   }
 
+
+  // ------------------------------
+  // INIT
+  // ------------------------------
   async function init(){
     attachEvents();
+
     const all = await window.App.loadCSV();
-    // filter by Affiliation equal to category (exact match)
-    //categoryData = all.filter(it => (it.Affiliation||'').trim().toLowerCase() === (category||'').trim().toLowerCase());
+
+    // фільтруємо БК за категорією
     categoryData = all.filter(it =>
       (it.Affiliation || '').trim().toLowerCase().includes((category || '').trim().toLowerCase())
     );
-    // obtain unique Types from categoryData
+
     const types = window.App.utils.unique(categoryData.map(d => d.Type));
+
     renderFilters(types);
     renderGallery(categoryData);
   }
 
-  // start
   init();
 })();
