@@ -10,6 +10,7 @@
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
   background:var(--bg);
@@ -57,6 +58,7 @@ body{
   max-width:1200px;
   margin:26px auto;
   padding:0 20px;
+  align-items:flex-start;
 }
 .sidebar{width:260px}
 .content{flex:1}
@@ -96,100 +98,97 @@ body{
 .card-item p.type{margin:0;color:var(--muted);font-size:13px}
 
 /* ------------------------------------------- */
-/*                 FULLSCREEN MODAL            */
+/*                 OVERLAY / MODAL             */
 /* ------------------------------------------- */
 
+/* overlay is full window and fixed */
 .overlay{
   position:fixed;
   inset:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.65);
+  background:rgba(0,0,0,0.55);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0;
+  padding:20px;
   z-index:200;
-  overflow:hidden;
+  /* do not allow page behind to scroll when visible - handled via JS body lock */
 }
 
+/* hide by class */
 .hidden{display:none}
 
+/* modal default (desktop): centered card */
 .modal{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  max-height:100svh;
+  position:relative;
   background:#fff;
-  border-radius:0;
-  padding:14px;
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
+  border-radius:12px;
+  width:100%;
+  max-width:980px;
+  padding:18px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.12);
+  max-height:calc(100vh - 60px);
+  overflow:auto; /* inner scroll if content big */
 }
 
+/* close button */
 .modal-close{
-  position:fixed;
-  top:14px;
-  right:14px;
-  z-index:50;
+  position:absolute;
+  right:18px;
+  top:18px;
   border:0;
-  background:rgba(255,255,255,0.8);
-  backdrop-filter:blur(4px);
-  font-size:36px;
-  border-radius:10px;
-  padding:6px 10px;
+  background:transparent;
+  font-size:24px;
   cursor:pointer;
+  z-index:60;
 }
 
-/* CONTENT */
+/* CONTENT INSIDE MODAL */
 .modal-body{
   display:flex;
-  flex-direction:column;
   gap:16px;
-  margin-top:50px;
+  align-items:flex-start;
 }
 
-/* MEDIA BLOCK */
+/* LEFT SECTION (media) */
 .modal-left{
-  width:100%;
+  flex:0 0 320px;
 }
 
+/* carousel */
 .carousel{
   position:relative;
   background:#fafafa;
-  border-radius:12px;
-  padding:6px;
+  border-radius:8px;
+  padding:8px;
   display:flex;
   align-items:center;
   justify-content:center;
-  min-height:280px;
-  overflow:hidden;
+  min-height:260px;
 }
-
-/* media */
 .carousel img,
 .carousel video{
   max-width:100%;
-  max-height:70svh;
-  object-fit:contain;
-  border-radius:10px;
+  max-height:360px;
   display:block;
+  border-radius:6px;
+  object-fit:contain;
 }
 
-/* arrows */
+/* carousel buttons */
 .carousel-btn{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
   border:0;
-  background:rgba(255,255,255,0.8);
-  font-size:26px;
+  background:rgba(255,255,255,0.85);
+  font-size:22px;
   cursor:pointer;
-  padding:8px 14px;
-  border-radius:10px;
-  z-index:20;
+  padding:8px 10px;
+  border-radius:6px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  z-index:30;
 }
 #prevImg{left:8px}
 #nextImg{right:8px}
@@ -197,24 +196,102 @@ body{
 #imgCount{
   margin-top:6px;
   text-align:center;
+  display:block;
   color:var(--muted);
-  font-size:14px;
 }
 
-/* TEXT SECTION */
+/* RIGHT SIDE BLOCK */
 .modal-right{
-  width:100%;
-  margin-top:10px;
+  flex:1;
 }
 
+/* small text */
 .small{font-size:12px}
 
-/* Responsive */
-@media (min-width:900px){
+/* ------------------------------ */
+/*            RESPONSIVE          */
+/* ------------------------------ */
+
+/* Mobile-first change: at small widths make column layout (filters above gallery) */
+@media (max-width:900px){
+  .container{
+    flex-direction:column; /* filters then gallery */
+    gap:12px;
+  }
+
+  .sidebar{width:100%}
+  .content{width:100%}
+
+  .modal{
+    /* Fullscreen modal for mobile */
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    max-width:none;
+    max-height:100svh;
+    border-radius:0;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden; /* we'll allow inner scroll on modal-body */
+  }
+
+  .modal-close{
+    position:fixed;
+    top:10px;
+    right:10px;
+    font-size:28px;
+    background:rgba(255,255,255,0.9);
+    padding:6px 8px;
+    border-radius:8px;
+  }
+
+  .modal-body{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    overflow:auto; /* inner scroll */
+    padding-top:40px; /* space for close button */
+  }
+
+  .modal-left{
+    width:100%;
+    flex:0 0 auto;
+  }
+
+  .carousel{
+    min-height:60vh; /* give the media big space */
+    padding:6px;
+    border-radius:6px;
+  }
+
+  .carousel img,
+  .carousel video{
+    max-height:60vh;
+    width:100%;
+    height:auto;
+  }
+
+  .modal-right{
+    padding:12px 8px 20px;
+    overflow:auto;
+  }
+
+  /* arrows slightly larger on mobile */
+  .carousel-btn{
+    font-size:28px;
+    padding:10px 12px;
+  }
+}
+
+/* Desktop specific: ensure modal-body row layout */
+@media (min-width:901px){
   .modal-body{
     flex-direction:row;
   }
   .modal-left{
-    flex:0 0 380px;
+    flex:0 0 340px;
   }
 }
