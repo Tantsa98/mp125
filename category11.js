@@ -10,7 +10,6 @@
 
   const overlay = document.getElementById('overlay');
   const closeModal = document.getElementById('closeModal');
-
   const mName = document.getElementById('mName');
   const mType = document.getElementById('mType');
   const mAff = document.getElementById('mAff');
@@ -23,6 +22,7 @@
 
   let currentImages = [];
   let currentIndex = 0;
+  let categoryData = [];
 
   let mediaIndex = null;
 
@@ -44,28 +44,41 @@
     return all.filter(name => name.startsWith(imgId + "#"));
   }
 
-  function setOverlayVisible(v){
-    overlay.classList.toggle('hidden', !v);
-    overlay.setAttribute('aria-hidden', v ? 'false' : 'true');
+  function setOverlayVisible(visible){
+    if(visible){
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden','false');
+    } else {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden','true');
+    }
   }
 
-  /* RENDER */
   function renderFilters(types){
+    if(!filtersRoot) return;
     filtersRoot.innerHTML = '';
+    if(!types.length){
+      filtersRoot.innerHTML = '<p class="muted">Немає варіантів</p>';
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
     types.forEach(t => {
-      const id = 'f_' + t.replace(/\s+/g,'_');
-      const lbl = document.createElement('label');
-      lbl.innerHTML = `<input type="checkbox" value="${t}" id="${id}"> ${t}`;
-      filtersRoot.appendChild(lbl);
+      const id = 'f_'+t.replace(/\s+/g,'_');
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" value="${t}" id="${id}"> ${t}`;
+      frag.appendChild(label);
     });
+    filtersRoot.appendChild(frag);
   }
 
   function getSelectedTypes(){
+    if(!filtersRoot) return [];
     return Array.from(filtersRoot.querySelectorAll('input:checked'))
       .map(i => i.value);
   }
 
-  function filterData(data, selected){
+  function filterByTypes(data, selected){
     if(!selected.length) return data;
     return data.filter(d => selected.includes(d.Type));
   }
@@ -73,29 +86,30 @@
   function renderGallery(data){
     galleryRoot.innerHTML = '';
     if(!data.length){
-      galleryRoot.innerHTML = `<p class="muted">Нічого не знайдено</p>`;
+      galleryRoot.innerHTML = '<p class="muted">Нічого не знайдено.</p>';
       return;
     }
+
+    const frag = document.createDocumentFragment();
 
     data.forEach(item => {
       const card = document.createElement('div');
       card.className = 'card-item';
       card.tabIndex = 0;
-      card.innerHTML = `
-        <h3>${item.Name}</h3>
-        <p class="type">${item.Type}</p>
-      `;
+      card.setAttribute('role','button');
+      card.innerHTML = `<h3>${item.Name}</h3><p class="type">${item.Type}</p>`;
 
       card.addEventListener('click', () => openModal(item));
-      card.addEventListener('keydown', e => {
+      card.addEventListener('keydown', e => { 
         if(e.key === 'Enter') openModal(item);
       });
 
-      galleryRoot.appendChild(card);
+      frag.appendChild(card);
     });
+
+    galleryRoot.appendChild(frag);
   }
 
-  /* MODAL */
   async function openModal(item){
     mName.textContent = item.Name || '';
     mType.textContent = item.Type || '';
@@ -112,7 +126,8 @@
 
   function updateCarousel(){
     if(!currentImages.length){
-      carouselEl.src = '';
+      carouselEl.replaceWith(carouselEl.cloneNode());
+      carouselEl = document.getElementById('carouselImg');
       imgCount.textContent = '0 / 0';
       prevBtn.style.display = 'none';
       nextBtn.style.display = 'none';
@@ -125,7 +140,7 @@
 
     let newEl;
 
-    if(['mp4','mov','webm'].includes(ext)){
+    if(['mp4','webm','mov'].includes(ext)){
       newEl = document.createElement('video');
       newEl.controls = true;
     } else {
@@ -135,71 +150,55 @@
 
     newEl.id = 'carouselImg';
     newEl.src = url;
-    newEl.style.opacity = '0';
 
     carouselEl.replaceWith(newEl);
     carouselEl = newEl;
 
-    requestAnimationFrame(() => {
-      newEl.style.transition = 'opacity .25s';
-      newEl.style.opacity = '1';
-    });
-
     imgCount.textContent = (currentIndex+1)+' / '+currentImages.length;
 
-    const show = currentImages.length > 1;
-    prevBtn.style.display = show ? 'block':'none';
-    nextBtn.style.display = show ? 'block':'none';
+    prevBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
+    nextBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
   }
 
-  function prev(){ currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length; updateCarousel();}
-  function next(){ currentIndex = (currentIndex + 1) % currentImages.length; updateCarousel();}
+  function prevImage(){
+    if(!currentImages.length) return;
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+    updateCarousel();
+  }
 
-  /* SWIPE SUPPORT */
-  function addSwipe(){
-    let startX = 0;
-    let endX = 0;
-
-    overlay.addEventListener('touchstart', e => {
-      startX = e.changedTouches[0].clientX;
-    });
-
-    overlay.addEventListener('touchend', e => {
-      endX = e.changedTouches[0].clientX;
-      const diff = endX - startX;
-
-      if(Math.abs(diff) < 50) return; // threshold
-
-      if(diff < 0) next();
-      else prev();
-    });
+  function nextImage(){
+    if(!currentImages.length) return;
+    currentIndex = (currentIndex + 1) % currentImages.length;
+    updateCarousel();
   }
 
   function attachEvents(){
-    filtersRoot.addEventListener('change', () => {
-      renderGallery(filterData(categoryData, getSelectedTypes()));
+    if(filtersRoot){
+      filtersRoot.addEventListener('change', () => {
+        const selected = getSelectedTypes();
+        renderGallery(filterByTypes(categoryData, selected));
+      });
+    }
+
+    if(clearBtn){
+      clearBtn.addEventListener('click', () => {
+        Array.from(filtersRoot.querySelectorAll('input')).forEach(i => i.checked = false);
+        renderGallery(categoryData);
+      });
+    }
+
+    if(closeModal) closeModal.addEventListener('click', () => setOverlayVisible(false));
+    if(overlay) overlay.addEventListener('click', e => { 
+      if(e.target === overlay) setOverlayVisible(false); 
     });
 
-    clearBtn.addEventListener('click', () => {
-      filtersRoot.querySelectorAll('input').forEach(i => i.checked = false);
-      renderGallery(categoryData);
-    });
-
-    closeModal.addEventListener('click', () => setOverlayVisible(false));
-    overlay.addEventListener('click', e => {
-      if(e.target === overlay) setOverlayVisible(false);
-    });
-
-    prevBtn.addEventListener('click', prev);
-    nextBtn.addEventListener('click', next);
-
-    addSwipe();
+    prevBtn.addEventListener('click', prevImage);
+    nextBtn.addEventListener('click', nextImage);
   }
-
-  let categoryData = [];
 
   async function init(){
     attachEvents();
+
     const all = await window.App.loadCSV();
 
     categoryData = all.filter(it =>
@@ -208,6 +207,7 @@
     );
 
     const types = window.App.utils.unique(categoryData.map(d => d.Type));
+
     renderFilters(types);
     renderGallery(categoryData);
   }
