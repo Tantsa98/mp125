@@ -29,7 +29,7 @@
   async function loadMediaIndex(){
     if (mediaIndex) return mediaIndex;
     try {
-      const res = await fetch('./data/media-index.json');
+      const res = await fetch('data/media-index.json');
       mediaIndex = await res.json();
       return mediaIndex;
     } catch (e){
@@ -136,7 +136,7 @@
 
     const file = currentImages[currentIndex];
     const ext = file.split('.').pop().toLowerCase();
-    const url = './media/' + file;
+    const url = 'media/' + file;
 
     let newEl;
 
