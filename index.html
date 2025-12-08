@@ -7,58 +7,53 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="container">
-      <h1 class="brand">Галерея BK</h1>
-      <p class="subtitle">Проста документаційна тема — фільтруй та переглядай</p>
-    </div>
+  <header class="site-header">
+    <h1>Галерея BK</h1>
+    <p class="subtitle">Документація / каталог — мінімалістична тема</p>
   </header>
 
-  <main class="container main-grid">
+  <main class="container">
     <aside id="filters" class="filters">
-      <div class="filter-block">
-        <h3>Фільтр: Type</h3>
-        <div id="typeOptions" class="options"></div>
-        <button id="clearType" class="btn ghost">Скинути Type</button>
-      </div>
+      <section class="filter-block">
+        <h3>Фільтр — Type</h3>
+        <div id="typeList" class="filter-list"></div>
+        <button id="clearType" class="btn btn-link">Скинути Type</button>
+      </section>
 
-      <div class="filter-block">
-        <h3>Фільтр: Affiliation</h3>
-        <div id="affOptions" class="options"></div>
-        <button id="clearAff" class="btn ghost">Скинути Affiliation</button>
-      </div>
+      <section class="filter-block">
+        <h3>Фільтр — Affiliation</h3>
+        <div id="affList" class="filter-list"></div>
+        <button id="clearAff" class="btn btn-link">Скинути Affiliation</button>
+      </section>
     </aside>
 
-    <section class="gallery-area">
-      <div class="controls">
-        <div id="activeFilters" class="active-filters" aria-live="polite"></div>
-        <div class="info">Показано <span id="count">0</span> елементів</div>
+    <section class="gallery-section">
+      <div class="controls-mobile">
+        <button id="toggleFilters" class="btn">Фільтри</button>
       </div>
 
-      <div id="gallery" class="gallery"></div>
+      <div id="gallery" class="gallery-grid" aria-live="polite"></div>
+
+      <div id="noResults" class="no-results" hidden>Нічого не знайдено.</div>
     </section>
   </main>
 
   <!-- Modal -->
-  <div id="overlay" class="overlay hidden">
-    <div class="modal">
-      <button id="closeModal" class="close">✕</button>
+  <div id="overlay" class="overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModal" class="modal-close" aria-label="Закрити">&times;</button>
       <div class="modal-content">
-        <h2 id="mName"></h2>
-        <p class="meta"><strong>Type:</strong> <span id="mType"></span> — <strong>Affiliation:</strong> <span id="mAff"></span></p>
-        <div id="mDesc" class="desc"></div>
+        <h2 id="modalTitle"></h2>
+        <p class="meta"><strong>Type:</strong> <span id="modalType"></span> — <strong>Affiliation:</strong> <span id="modalAff"></span></p>
+        <p id="modalDesc" class="desc"></p>
 
-        <div id="mediaWrap" class="media-wrap">
-          <button id="prevMedia" class="media-nav">‹</button>
-          <div id="mediaContainer" class="media-container"></div>
-          <button id="nextMedia" class="media-nav">›</button>
-        </div>
+        <div id="mediaGallery" class="media-gallery"></div>
       </div>
     </div>
   </div>
 
-  <footer class="footer container">
-    <small>Зроблено для документації • мінімалістична тема</small>
+  <footer class="site-footer">
+    <small>Тема: мінімалістична • Кольори: #fd8906, #10050f, #dfb700, #00498f</small>
   </footer>
 
   <script src="script.js" type="module"></script>
