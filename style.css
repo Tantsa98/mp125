@@ -1,9 +1,9 @@
 :root {
-  --accent: #fd8906;     /* помаранчевий */
-  --accent2: #dfb700;    /* золотистий */
+  --accent: #fd8906;
+  --accent2: #dfb700;
   --blue: #00498f;
 
-  --bg: #f7f7f7;         /* світлий фон */
+  --bg: #f7f7f7;
   --card-bg: #ffffff;
   --text: #1a1a1a;
 
@@ -13,7 +13,7 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* ==================== GLOBAL ==================== */
+/* --------------------- GLOBAL --------------------- */
 
 * {
   box-sizing: border-box;
@@ -26,10 +26,10 @@ body {
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* ==================== TOPBAR ==================== */
+/* --------------------- TOPBAR --------------------- */
 
 .topbar {
-  background: #0f0f0f; /* чорна шапка */
+  background: #0f0f0f;
   padding: 14px 22px;
   border-bottom: 2px solid var(--accent);
 
@@ -43,11 +43,11 @@ body {
 .logo {
   margin: 0;
   color: var(--accent2);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
 }
 
-/* ==================== BUTTONS ==================== */
+/* --------------------- BUTTONS --------------------- */
 
 button, .btn {
   background: var(--accent);
@@ -74,7 +74,7 @@ button.secondary:hover {
   background: #cdaa00;
 }
 
-/* ==================== GRID / HOME CARDS ==================== */
+/* --------------------- HOME GRID --------------------- */
 
 .grid-3 {
   display: grid;
@@ -83,32 +83,7 @@ button.secondary:hover {
   padding: 20px;
 }
 
-.card {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: 0.2s;
-  border-left: 4px solid var(--accent);
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 18px rgba(0,0,0,0.12);
-}
-
-.card h2 {
-  margin: 0 0 6px;
-  color: var(--accent);
-}
-
-.card p {
-  margin: 0;
-  color: #555;
-}
-
-/* ==================== CATEGORY LAYOUT ==================== */
+/* --------------------- CATEGORY LAYOUT --------------------- */
 
 .container {
   display: flex;
@@ -116,6 +91,7 @@ button.secondary:hover {
   padding: 20px;
 }
 
+/* SIDEBAR */
 .sidebar {
   width: 260px;
 }
@@ -128,7 +104,39 @@ button.secondary:hover {
   border-top: 3px solid var(--accent2);
 }
 
-/* ==================== GALLERY ==================== */
+/* --------------------- FILTERS --------------------- */
+
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-bottom: 20px;
+}
+
+#filters select,
+#clearFilters {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 2px solid var(--accent);
+  padding: 8px 12px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#clearFilters {
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+}
+
+/* --------------------- GALLERY --------------------- */
+
+/* ГАЛЕРЕЯ ЗАВЖДИ ПІД ФІЛЬТРАМИ */
+.category-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .gallery {
   display: grid;
@@ -161,7 +169,7 @@ button.secondary:hover {
   font-size: 14px;
 }
 
-/* ==================== MODAL ==================== */
+/* --------------------- MODAL --------------------- */
 
 .overlay {
   position: fixed;
@@ -238,4 +246,69 @@ button.secondary:hover {
 .small {
   font-size: 12px;
   color: #777;
+}
+
+/* ===================================================
+   📱 MOBILE 6.1" ADAPTATION
+   =================================================== */
+
+@media (max-width: 768px) {
+
+  /* Шапка */
+  .topbar {
+    padding: 12px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  /* Контейнер категорії */
+  .container {
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  /* Sidebar замінюється на блок */
+  .sidebar {
+    width: 100%;
+  }
+
+  /* Фільтри стають стовпчиком */
+  #filters {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Галерея на 1–2 колонки */
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .card-item {
+    padding: 12px;
+  }
+
+  /* Модалка: кнопки зсередини */
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  #prevImg {
+    left: 10px;
+  }
+
+  #nextImg {
+    right: 10px;
+  }
+}
+
+/* ===================================================
+   📱 VERY SMALL PHONES (до 400px)
+   =================================================== */
+@media (max-width: 400px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
 }
