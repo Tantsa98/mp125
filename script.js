@@ -1,256 +1,120 @@
-// script.js — виправлений, надійний варіант
-const CSV_PATH = './data/BK.csv';
-const MEDIA_INDEX_PATH = './data/media-index.json';
-const MEDIA_FOLDER = './Media/';
+document.addEventListener("DOMContentLoaded", () => {
+    const gallery = document.getElementById("gallery");
+    const typeFilter = document.getElementById("filterType");
+    const affFilter = document.getElementById("filterAff");
+    const clearBtn = document.getElementById("clearFilters");
 
-let items = [];
-let mediaFiles = []; // flat array of filenames (from media-index.json)
-let activeTypes = new Set();
-let activeAffs = new Set();
+    const overlay = document.getElementById("overlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const closeModal = document.getElementById("closeModal");
 
-function log(...args){ console.log('[BK]', ...args); }
+    let items = [];
 
-// --- DOM ready
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    await loadAll();
-    renderFilters();
-    renderGallery();
-    attachUIHandlers();
-    log('Init finished');
-  } catch (err) {
-    console.error('[BK] Init error:', err);
-    const g = document.getElementById('gallery');
-    if (g) g.innerHTML = `<div class="no-results">Помилка ініціалізації — дивись консоль.</div>`;
-  }
-});
+    // Load CSV
+    fetch("./data/BK.csv")
+        .then((response) => response.text())
+        .then((text) => {
+            items = parseCSV(text);
+            populateFilters(items);
+            renderGallery(items);
+        });
 
-// --- Load CSV + media index
-async function loadAll(){
-  const [csvText, mediaJson] = await Promise.all([
-    fetchText(CSV_PATH),
-    fetchJson(MEDIA_INDEX_PATH)
-  ]);
-  items = parseCSV(csvText);
-  // media-index.json may be either an array or object mapping prefixes -> arrays
-  if (Array.isArray(mediaJson)) {
-    mediaFiles = mediaJson.slice();
-  } else if (typeof mediaJson === 'object' && mediaJson !== null) {
-    // flatten object values
-    mediaFiles = Object.values(mediaJson).flat();
-  } else {
-    mediaFiles = [];
-  }
-  log(`Loaded ${items.length} items, ${mediaFiles.length} media files`);
-}
+    function parseCSV(data) {
+        const rows = data.split("\n").map((r) => r.trim()).filter(Boolean);
+        const headers = rows.shift().split(",");
 
-async function fetchText(path){
-  const r = await fetch(path);
-  if(!r.ok) throw new Error(`Cannot fetch ${path}: ${r.status} ${r.statusText}`);
-  return await r.text();
-}
-async function fetchJson(path){
-  const r = await fetch(path);
-  if(!r.ok) throw new Error(`Cannot fetch ${path}: ${r.status} ${r.statusText}`);
-  return await r.json();
-}
-
-// --- Robust CSV parser (handles quoted cells)
-function parseCSV(text){
-  if(!text) return [];
-  const lines = text.replace(/\r/g,'').split('\n').filter(l=>l.trim()!=='');
-  if(lines.length < 1) return [];
-  const headers = parseCSVLine(lines[0]);
-  const rows = [];
-  for(let i=1;i<lines.length;i++){
-    const cols = parseCSVLine(lines[i]);
-    if(cols.length === 0) continue;
-    const obj = {};
-    for(let j=0;j<headers.length;j++){
-      obj[headers[j]] = cols[j] ?? '';
+        return rows.map((line) => {
+            const values = line.split(",");
+            let obj = {};
+            headers.forEach((h, i) => {
+                obj[h.trim()] = values[i] ? values[i].trim() : "";
+            });
+            return obj;
+        });
     }
-    rows.push(obj);
-  }
-  return rows;
-}
-function parseCSVLine(line){
-  const res = [];
-  let cur = '';
-  let inQuotes = false;
-  for(let i=0;i<line.length;i++){
-    const ch = line[i];
-    if(ch === '"'){
-      // peek next: if double quote -> escaped quote
-      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; continue; }
-      inQuotes = !inQuotes;
-      continue;
+
+    function populateFilters(data) {
+        const types = [...new Set(data.map(i => i.Type))].sort();
+        const affs = [...new Set(data.map(i => i.Affiliation))].sort();
+
+        types.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t;
+            typeFilter.appendChild(opt);
+        });
+
+        affs.forEach(a => {
+            const opt = document.createElement("option");
+            opt.value = a;
+            opt.textContent = a;
+            affFilter.appendChild(opt);
+        });
     }
-    if(ch === ',' && !inQuotes){ res.push(cur); cur=''; continue; }
-    cur += ch;
-  }
-  res.push(cur);
-  return res.map(s=>s.trim());
-}
 
-// --- Filters UI
-function uniqueValues(field){
-  const s = new Set();
-  items.forEach(it=>{
-    const v = (it[field] ?? '').trim();
-    if(v) s.add(v);
-  });
-  return Array.from(s).sort((a,b)=>a.localeCompare(b,'uk'));
-}
+    function renderGallery(data) {
+        gallery.innerHTML = "";
 
-function renderFilters(){
-  const typeRoot = document.getElementById('filter-type');
-  const affRoot = document.getElementById('filter-aff');
-  if(!typeRoot || !affRoot) { log('Filter roots not found'); return; }
+        data.forEach((item) => {
+            const card = document.createElement("div");
+            card.className = "card";
 
-  typeRoot.innerHTML = '';
-  affRoot.innerHTML = '';
+            const imgSrc = `./Media/${item.imgId}.webp`;
 
-  uniqueValues('Type').forEach(t=>{
-    const id = `ft-${safeId(t)}`;
-    const lbl = createCheckbox(id, t, ()=>toggleType(t));
-    typeRoot.appendChild(lbl);
-  });
+            card.innerHTML = `
+                <img src="${imgSrc}" alt="${item.Name}">
+                <h3>${item.Name}</h3>
+                <p><b>Type:</b> ${item.Type}</p>
+                <p><b>Affiliation:</b> ${item.Affiliation}</p>
+            `;
 
-  uniqueValues('Affiliation').forEach(a=>{
-    const id = `fa-${safeId(a)}`;
-    const lbl = createCheckbox(id, a, ()=>toggleAff(a));
-    affRoot.appendChild(lbl);
-  });
-}
+            // Make card clickable
+            card.addEventListener("click", () => openModal(item, imgSrc));
 
-function createCheckbox(id, labelText, onChange){
-  const wrapper = document.createElement('label');
-  wrapper.className = 'filter-item';
-  wrapper.innerHTML = `<input type="checkbox" id="${id}"> <span>${escapeHtml(labelText)}</span>`;
-  const input = wrapper.querySelector('input');
-  input.addEventListener('change', onChange);
-  return wrapper;
-}
+            gallery.appendChild(card);
+        });
+    }
 
-function toggleType(value){
-  const chk = document.querySelector(`#ft-${safeId(value)}`);
-  if(chk && chk.checked) activeTypes.add(value); else activeTypes.delete(value);
-  renderGallery();
-}
-function toggleAff(value){
-  const chk = document.querySelector(`#fa-${safeId(value)}`);
-  if(chk && chk.checked) activeAffs.add(value); else activeAffs.delete(value);
-  renderGallery();
-}
+    function applyFilters() {
+        const t = typeFilter.value;
+        const a = affFilter.value;
 
-// --- Gallery
-function renderGallery(){
-  const gallery = document.getElementById('gallery');
-  const noResults = document.getElementById('no-results');
-  if(!gallery) { log('Gallery root not found'); return; }
-  gallery.innerHTML = '';
+        const filtered = items.filter(x =>
+            (t === "" || x.Type === t) &&
+            (a === "" || x.Affiliation === a)
+        );
 
-  const filtered = items.filter(it=>{
-    const matchType = (activeTypes.size === 0) || activeTypes.has(it.Type);
-    const matchAff = (activeAffs.size === 0) || activeAffs.has(it.Affiliation);
-    return matchType && matchAff;
-  });
+        renderGallery(filtered);
+    }
 
-  if(filtered.length === 0){
-    if(noResults) noResults.hidden = false;
-    return;
-  }
-  if(noResults) noResults.hidden = true;
+    typeFilter.addEventListener("change", applyFilters);
+    affFilter.addEventListener("change", applyFilters);
 
-  filtered.forEach(it=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.tabIndex = 0;
-    card.innerHTML = `<div class="title">${escapeHtml(it.Name)}</div><div class="type">${escapeHtml(it.Type)}</div>`;
-    card.addEventListener('click', ()=>openModalFor(it));
-    card.addEventListener('keypress', (e)=>{ if(e.key === 'Enter') openModalFor(it); });
-    gallery.appendChild(card);
-  });
-}
-
-// --- Modal
-function openModalFor(item){
-  const overlay = document.getElementById('overlay');
-  if(!overlay) return;
-  // remove hidden attr and add class show (both) to be robust
-  overlay.removeAttribute('hidden');
-  overlay.classList.add('show');
-
-  document.getElementById('modalTitle').textContent = item.Name || '';
-  document.getElementById('modalType').textContent = item.Type || '';
-  document.getElementById('modalAff').textContent = item.Affiliation || '';
-  document.getElementById('modalDesc').textContent = item.Desc || '';
-
-  const mg = document.getElementById('mediaGallery');
-  if(!mg) return;
-  mg.innerHTML = '';
-
-  const prefix = (item.imgId || '').toString().trim();
-  if(!prefix){
-    mg.innerHTML = '<div class="no-results">Не вказано imgId для цього запису.</div>';
-    return;
-  }
-
-  const matches = mediaFiles.filter(f => f.toLowerCase().startsWith(prefix.toLowerCase()));
-  if(matches.length === 0){
-    mg.innerHTML = '<div class="no-results">Медіафайлів не знайдено.</div>';
-  } else {
-    matches.forEach(fname=>{
-      const ext = fname.split('.').pop().toLowerCase();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'media-item';
-      if(['mp4','webm','ogg'].includes(ext)){
-        const v = document.createElement('video');
-        v.src = MEDIA_FOLDER + fname;
-        v.controls = true;
-        v.preload = 'metadata';
-        wrapper.appendChild(v);
-      } else {
-        const img = document.createElement('img');
-        img.src = MEDIA_FOLDER + fname;
-        img.alt = fname;
-        wrapper.appendChild(img);
-      }
-      mg.appendChild(wrapper);
+    clearBtn.addEventListener("click", () => {
+        typeFilter.value = "";
+        affFilter.value = "";
+        renderGallery(items);
     });
-  }
-}
 
-function closeModal(){
-  const overlay = document.getElementById('overlay');
-  if(!overlay) return;
-  overlay.classList.remove('show');
-  // set hidden attribute after a tick to avoid flash
-  setTimeout(()=> overlay.setAttribute('hidden',''), 120);
-}
+    function openModal(item, imgSrc) {
+        modalTitle.textContent = item.Name;
 
-// --- Events attach
-function attachUIHandlers(){
-  document.getElementById('resetType')?.addEventListener('click', ()=>{
-    activeTypes.clear();
-    document.querySelectorAll('#filter-type input[type=checkbox]').forEach(i=>i.checked=false);
-    renderGallery();
-  });
-  document.getElementById('resetAff')?.addEventListener('click', ()=>{
-    activeAffs.clear();
-    document.querySelectorAll('#filter-aff input[type=checkbox]').forEach(i=>i.checked=false);
-    renderGallery();
-  });
+        modalBody.innerHTML = `
+            <img src="${imgSrc}" alt="${item.Name}">
+            <p><b>Type:</b> ${item.Type}</p>
+            <p><b>Affiliation:</b> ${item.Affiliation}</p>
+            <p>${item.Desc}</p>
+        `;
 
-  const overlay = document.getElementById('overlay');
-  const closeBtn = document.getElementById('closeModal');
-  closeBtn?.addEventListener('click', closeModal);
-  overlay?.addEventListener('click', (e)=>{
-    if(e.target === overlay) closeModal();
-  });
-  document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeModal(); });
-}
+        overlay.classList.add("active");
+    }
 
-// --- Utilities
-function safeId(s){ return String(s || '').replace(/\s+/g,'_').replace(/[^\w\-]/g,'').toLowerCase(); }
-function escapeHtml(str){ return String(str ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    closeModal.addEventListener("click", () => {
+        overlay.classList.remove("active");
+    });
+
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.classList.remove("active");
+    });
+});
