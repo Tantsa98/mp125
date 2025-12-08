@@ -136,7 +136,7 @@
 
     const file = currentImages[currentIndex];
     const ext = file.split('.').pop().toLowerCase();
-    const url = 'media/' + file;
+    const url = 'media/' + encodeURIComponent(file);
 
     let newEl;
 
