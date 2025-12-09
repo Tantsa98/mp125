@@ -59,25 +59,39 @@
   </main>
 
   <footer class="footer">
-    <small>     Власність 125 ОВМБр</small>
+    <small>Власність 125 ОВМБр</small>
   </footer>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const splash = document.getElementById("splash");
 
-      // якщо вже був splash — не показуємо
-      if (localStorage.getItem("splashSeen") === "1") {
+      /*
+       * Показуємо splash лише якщо:
+       * - НЕ існує ключ "splashShown"
+       * (навігація між сторінками splash НЕ запускає)
+       */
+      const alreadyShown = localStorage.getItem("splashShown") === "1";
+
+      if (alreadyShown) {
+        // миттєво прибрати splash без видимого миготіння
         splash.remove();
         return;
       }
 
-      // показуємо splash тільки один раз
+      // показуємо splash тільки при першому відкритті
       setTimeout(() => {
         splash.classList.add("hidden");
-        setTimeout(() => splash.remove(), 600);
-        localStorage.setItem("splashSeen", "1");
-      }, 1200);
+
+        // даємо анімації завершитись
+        setTimeout(() => {
+          splash.remove();
+        }, 600);
+
+        // важливо: встановлюємо ключ ДО завершення анімації,
+        // щоб при поверненні з інших сторінок не було заставки.
+        localStorage.setItem("splashShown", "1");
+      }, 1500);
     });
   </script>
 
