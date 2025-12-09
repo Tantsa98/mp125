@@ -360,3 +360,45 @@ body{
 .fade-in[src] {
   opacity: 1;
 }
+
+/* Стилі для кнопки "Назад" */
+
+.footer {
+  padding-left: 25px;
+}
+
+/* Стилі для кнопки "Назад" */
+
+.back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  background: rgba(0, 0, 0, 0.6); /* тактичний темний фон */
+  border: 2px solid var(--yellow); /* жовта обводка */
+  border-radius: 10px;
+
+  color: var(--accent); /* помаранчева стрілка */
+  font-size: 26px;
+  font-weight: 700;
+
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Стрілка */
+.back-icon::before {
+  content: "⟵"; /* красивий символ повернення */
+  line-height: 1;
+}
+
+/* Ховер — яскравіший стиль */
+.back-icon:hover {
+  background: rgba(253, 137, 6, 0.2); /* легкий помаранчевий ефект */
+  border-color: var(--accent);        /* помаранчева обводка */
+  transform: translateX(-2px);
+}
