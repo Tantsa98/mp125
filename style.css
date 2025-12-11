@@ -402,3 +402,20 @@ body{
   border-color: var(--accent);        /* помаранчева обводка */
   transform: translateX(-2px);
 }
+
+/* ADDED */
+
+/* Дужки + число — білий колір, назва лишається оранжевою */
+.count {
+    color: #ffffff;       /* білий */
+    font-weight: 600;
+}
+
+/* щоб колір не успадковувався випадково */
+.card-item h3 .count {
+    color: #ffffff;
+}
+
+.modal-right h2 .count {
+    color: #ffffff;
+}
