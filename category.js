@@ -80,7 +80,8 @@
     mName.textContent = item.Name || '';
     if(cloudCounts && item.Name && Object.prototype.hasOwnProperty.call(cloudCounts, item.Name)){
       //mName.textContent = `${item.Name} (${cloudCounts[item.Name]})`;
-      mName.textContent = `${item.Name} (${cloudCounts[item.Name]} шт.)`;
+      //mName.textContent = `${item.Name} (${cloudCounts[item.Name]} шт.)`;
+      mName.innerHTML = `${item.Name} <span class="count">(${cloudCounts[item.Name]} шт.)</span>`;
     }
 
     mType.textContent = item.Type || '';
@@ -196,7 +197,8 @@
       card.setAttribute('role','button');
       card.dataset.imgId = item.imgId || '';
 
-      card.innerHTML = `<h3>${displayName}</h3><p class="type">${item.Type}</p>`;
+      //card.innerHTML = `<h3>${displayName}</h3><p class="type">${item.Type}</p>`;
+      card.innerHTML = `<h3>${item.Name} <span class="count">(${cloudCounts?.[item.Name] ?? ''} шт.)</span></h3><p class="type">${item.Type}</p>`;
 
       card.addEventListener('click', () => openModal(item));
       card.addEventListener('keydown', e => {
