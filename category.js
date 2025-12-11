@@ -77,11 +77,12 @@
   }
 
   async function openModal(item){
-    mName.textContent = item.Name || '';
-    if(cloudCounts && item.Name && Object.prototype.hasOwnProperty.call(cloudCounts, item.Name)){
-      //mName.textContent = `${item.Name} (${cloudCounts[item.Name]})`;
-      //mName.textContent = `${item.Name} (${cloudCounts[item.Name]} шт.)`;
-      mName.innerHTML = `${item.Name} <span class="count">(${cloudCounts[item.Name]} шт.)</span>`;
+    const name = item.Name || '';
+    mName.textContent = name;
+
+    // додаємо дужки тільки якщо count > 0
+    if (cloudCounts && cloudCounts[name] > 0) {
+      mName.innerHTML = `${name} <span class="count">(${cloudCounts[name]} шт.)</span>`;
     }
 
     mType.textContent = item.Type || '';
@@ -183,13 +184,15 @@
     }
 
     const frag = document.createDocumentFragment();
-    data.forEach(item => {
 
-      let displayName = item.Name || '';
-      if(cloudCounts && displayName && Object.prototype.hasOwnProperty.call(cloudCounts, displayName)){
-        //displayName = `${displayName} (${cloudCounts[displayName]})`;
-        displayName = `${displayName} (${cloudCounts[displayName]} шт.)`;
-      }
+    data.forEach(item => {
+      const name = item.Name || '';
+      const count = cloudCounts?.[name];
+
+      // генеруємо <span class="count"> лише якщо count > 0
+      const countHTML = (count && count > 0)
+        ? ` <span class="count">(${count} шт.)</span>`
+        : '';
 
       const card = document.createElement('div');
       card.className = 'card-item';
@@ -197,8 +200,10 @@
       card.setAttribute('role','button');
       card.dataset.imgId = item.imgId || '';
 
-      //card.innerHTML = `<h3>${displayName}</h3><p class="type">${item.Type}</p>`;
-      card.innerHTML = `<h3>${item.Name} <span class="count">(${cloudCounts?.[item.Name] ?? ''} шт.)</span></h3><p class="type">${item.Type}</p>`;
+      card.innerHTML = `
+        <h3>${name}${countHTML}</h3>
+        <p class="type">${item.Type}</p>
+      `;
 
       card.addEventListener('click', () => openModal(item));
       card.addEventListener('keydown', e => {
@@ -213,13 +218,9 @@
 
   // ---------------------- INIT ----------------------
   async function init(){
-    // ВСЕ ВАЖЛИВО: повернули старий механізм
     let all = [];
     if(window.App && typeof window.App.loadCSV === 'function'){
       all = await window.App.loadCSV();
-    } else {
-      // fallback тільки якщо App.loadCSV відсутній
-      all = await loadCSVFallback();
     }
 
     await loadCloudCounts();
