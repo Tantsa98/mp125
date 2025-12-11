@@ -54,7 +54,11 @@
       const res = await fetch('https://old-fog-c80a.tantsa98.workers.dev', {cache: "no-store"});
       if(!res.ok) throw new Error('Cloudflare response not ok');
       const j = await res.json();
-      cloudCounts = (pageKey && j && j[pageKey]) ? j[pageKey] : null;
+      if(pageKey && j && j[pageKey]){
+        cloudCounts = j[pageKey];
+      } else {
+        cloudCounts = null;
+      }
     } catch (e){
       console.warn("Не вдалося підвантажити дані з Cloudflare:", e);
       cloudCounts = null;
@@ -73,14 +77,10 @@
   }
 
   async function openModal(item){
-    const base = item.Name || '';
-    let htmlName = base;
-
-    if (cloudCounts && base && cloudCounts[base] !== undefined){
-      htmlName = `${base} <span class="count">(${cloudCounts[base]})</span>`;
+    mName.textContent = item.Name || '';
+    if(cloudCounts && item.Name && Object.prototype.hasOwnProperty.call(cloudCounts, item.Name)){
+      mName.textContent = `${item.Name} (${cloudCounts[item.Name]})`;
     }
-
-    mName.innerHTML = htmlName;
 
     mType.textContent = item.Type || '';
     mAff.textContent = item.Affiliation || '';
@@ -181,14 +181,11 @@
     }
 
     const frag = document.createDocumentFragment();
-
     data.forEach(item => {
 
-      const base = item.Name || '';
-      let titleHtml = base;
-
-      if (cloudCounts && base && cloudCounts[base] !== undefined){
-        titleHtml = `${base} <span class="count">(${cloudCounts[base]})</span>`;
+      let displayName = item.Name || '';
+      if(cloudCounts && displayName && Object.prototype.hasOwnProperty.call(cloudCounts, displayName)){
+        displayName = `${displayName} (${cloudCounts[displayName]})`;
       }
 
       const card = document.createElement('div');
@@ -197,10 +194,7 @@
       card.setAttribute('role','button');
       card.dataset.imgId = item.imgId || '';
 
-      card.innerHTML = `
-        <h3>${titleHtml}</h3>
-        <p class="type">${item.Type}</p>
-      `;
+      card.innerHTML = `<h3>${displayName}</h3><p class="type">${item.Type}</p>`;
 
       card.addEventListener('click', () => openModal(item));
       card.addEventListener('keydown', e => {
@@ -215,21 +209,19 @@
 
   // ---------------------- INIT ----------------------
   async function init(){
-
-    // Повернуло старий механізм CSV
+    // ВСЕ ВАЖЛИВО: повернули старий механізм
     let all = [];
     if(window.App && typeof window.App.loadCSV === 'function'){
       all = await window.App.loadCSV();
     } else {
+      // fallback тільки якщо App.loadCSV відсутній
       all = await loadCSVFallback();
     }
 
     await loadCloudCounts();
 
     categoryData = all.filter(it =>
-      (it.Affiliation || '')
-        .trim()
-        .toLowerCase()
+      (it.Affiliation || '').trim().toLowerCase()
         .includes((categoryLabel || '').trim().toLowerCase())
     );
 
@@ -240,7 +232,7 @@
   }
 
   attachEvents();
-  function attachEvents(){
+  async function attachEvents(){
     if(filtersRoot){
       filtersRoot.addEventListener('change', () => {
         const selected = getSelectedTypes();
