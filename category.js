@@ -79,7 +79,8 @@
   async function openModal(item){
     mName.textContent = item.Name || '';
     if(cloudCounts && item.Name && Object.prototype.hasOwnProperty.call(cloudCounts, item.Name)){
-      mName.textContent = `${item.Name} (${cloudCounts[item.Name]})`;
+      //mName.textContent = `${item.Name} (${cloudCounts[item.Name]})`;
+      mName.textContent = `${item.Name} (${cloudCounts[item.Name]} шт.)`;
     }
 
     mType.textContent = item.Type || '';
@@ -185,7 +186,8 @@
 
       let displayName = item.Name || '';
       if(cloudCounts && displayName && Object.prototype.hasOwnProperty.call(cloudCounts, displayName)){
-        displayName = `${displayName} (${cloudCounts[displayName]})`;
+        //displayName = `${displayName} (${cloudCounts[displayName]})`;
+        displayName = `${displayName} (${cloudCounts[displayName]} шт.)`;
       }
 
       const card = document.createElement('div');
