@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
       return new Response("Missing data", { status: 400 });
     }
 
-    const saved = await env.CODEST.get(email);
+    const saved = await env.CODES.get(email);
 
     if (!saved || saved !== code) {
       return new Response("Invalid code", { status: 401 });

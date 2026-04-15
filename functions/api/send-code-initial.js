@@ -9,7 +9,7 @@ export async function onRequestPost(context) {
     }
 
     // 🔐 перевірка whitelist
-    const allowed = await env.USERST.get(email);
+    const allowed = await env.USERS.get(email);
 
     if (!allowed) {
       return new Response("Not allowed", { status: 403 });
@@ -25,7 +25,7 @@ export async function onRequestPost(context) {
     console.log(`Login code for ${email}: ${code}`);
     
     console.log("ENV:", env);
-    console.log("USERST:", env.USERST);
+    console.log("USERS:", env.USERS);
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
