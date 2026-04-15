@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Вхід — Довідник БК</title>
+
+  <!-- твій загальний стиль -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Центрування форми */
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: var(--bg);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid #222;
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 8px 26px rgba(0,0,0,.5);
+    }
+
+    .login-card h2 {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #0f0f0f;
+      color: #fff;
+      outline: none;
+    }
+
+    .login-card input:focus {
+      border-color: var(--accent);
+    }
+
+    .login-card .btn {
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    /* 🔥 НОВИЙ ВІДСТУП */
+    .code-block {
+      margin-top: 20px;
+    }
+
+    .login-footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <h2>Вхід</h2>
+    <p>Введи email, щоб отримати код доступу</p>
+
+    <input id="email" type="email" placeholder="Email">
+    <button class="btn" onclick="sendCode()">Отримати код</button>
+
+    <!-- 🔥 ОБГОРТКА ДЛЯ КОДУ -->
+    <div class="code-block">
+      <input id="code" placeholder="Код">
+      <button class="btn" onclick="verifyCode()">Увійти</button>
+    </div>
+
+    <div class="login-footer">
+      Доступ лише для авторизованих користувачів
+    </div>
+
+  </div>
+</div>
+
+<script>
+async function sendCode() {
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    alert("Введи email");
+    return;
+  }
+
+  const res = await fetch("/api/send-code", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+
+  if (!res.ok) {
+    alert("Email не дозволений");
+    return;
+  }
+
+  alert("Код відправлено на електронну пошту");
+}
+
+async function verifyCode() {
+  const email = document.getElementById("email").value;
+  const code = document.getElementById("code").value;
+
+  if (!email || !code) {
+    alert("Введи email і код");
+    return;
+  }
+
+  const res = await fetch("/api/verify-code", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code })
+  });
+
+  if (!res.ok) {
+    alert("Невірний код");
+    return;
+  }
+
+  window.location.href = "/";
+}
+</script>
+
+</body>
+</html>

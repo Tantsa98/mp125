@@ -28,6 +28,25 @@ body{
 }
 
 /* ========================================= */
+/*                SPLASH SCREEN              */
+/* ========================================= */
+
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000 url("logo.webp") center center no-repeat;
+  background-size: cover;     /* повне покриття */
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+#splash.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ========================================= */
 /*                  TOPBAR                   */
 /* ========================================= */
 .topbar{
@@ -184,6 +203,15 @@ body{
   color:var(--muted);
   font-size:13px;
 }
+/*
+.card-item h3 .count {
+  color: #ffffff; 
+}
+*/
+.card-item h3 span.count {
+  color: #ffffff;
+}
+
 
 /* ========================================= */
 /*             FULLSCREEN MODAL              */
@@ -328,7 +356,7 @@ body{
     width:100%;
   }
 }
-/*//////////////////////////////////////*/
+
 /* ========================================= */
 /*            LAZY IMAGE SMOOTH FADE         */
 /* ========================================= */
@@ -341,3 +369,46 @@ body{
 .fade-in[src] {
   opacity: 1;
 }
+
+/* Стилі для кнопки "Назад" */
+
+.footer {
+  padding-left: 25px;
+}
+
+/* Стилі для кнопки "Назад" */
+
+.back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  background: rgba(0, 0, 0, 0.6); /* тактичний темний фон */
+  border: 2px solid var(--yellow); /* жовта обводка */
+  border-radius: 10px;
+
+  color: var(--accent); /* помаранчева стрілка */
+  font-size: 26px;
+  font-weight: 700;
+
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Стрілка */
+.back-icon::before {
+  content: "⟵"; /* красивий символ повернення */
+  line-height: 1;
+}
+
+/* Ховер — яскравіший стиль */
+.back-icon:hover {
+  background: rgba(253, 137, 6, 0.2); /* легкий помаранчевий ефект */
+  border-color: var(--accent);        /* помаранчева обводка */
+  transform: translateX(-2px);
+}
+

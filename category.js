@@ -16,6 +16,8 @@
   const mAff = document.getElementById('mAff');
   const mDesc = document.getElementById('mDesc');
 
+  const videoBtn = document.getElementById('videoBtn'); // 🔥 НОВЕ
+
   const prevBtn = document.getElementById('prevImg');
   const nextBtn = document.getElementById('nextImg');
   const imgCount = document.getElementById('imgCount');
@@ -80,7 +82,6 @@
     const name = item.Name || '';
     mName.textContent = name;
 
-    // додаємо дужки тільки якщо count > 0
     if (cloudCounts && cloudCounts[name] > 0) {
       mName.innerHTML = `${name} <span class="count">(${cloudCounts[name]} шт.)</span>`;
     }
@@ -88,6 +89,21 @@
     mType.textContent = item.Type || '';
     mAff.textContent = item.Affiliation || '';
     mDesc.textContent = item.Desc || '';
+
+    // 🔥 ВІДЕО ЛОГІКА
+    if (videoBtn) {
+      const videoId = (item.videoId || '').trim();
+
+      if (videoId.length > 0) {
+        videoBtn.classList.remove('hidden');
+
+        videoBtn.onclick = () => {
+          openVideo(videoId);
+        };
+      } else {
+        videoBtn.classList.add('hidden');
+      }
+    }
 
     const imgId = (item.imgId || '').trim();
     currentImages = await findMediaByImgId(imgId);
@@ -147,6 +163,39 @@
     updateCarousel();
   }
 
+  // ---------------------- VIDEO OVERLAY ----------------------
+  function openVideo(videoId){
+    const videoOverlay = document.createElement('div');
+    videoOverlay.className = 'overlay';
+
+    videoOverlay.innerHTML = `
+      <div class="modal">
+        <button class="modal-close">×</button>
+
+        <div style="position:relative;padding-top:56.25%;">
+          <iframe 
+            src="https://iframe.videodelivery.net/${videoId}"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(videoOverlay);
+
+    videoOverlay.querySelector('.modal-close').onclick = () => {
+      videoOverlay.remove();
+    };
+
+    videoOverlay.onclick = (e) => {
+      if(e.target === videoOverlay){
+        videoOverlay.remove();
+      }
+    };
+  }
+
   // ---------------------- FILTERS + GALLERY ----------------------
   function renderFilters(types){
     if(!filtersRoot) return;
@@ -189,7 +238,6 @@
       const name = item.Name || '';
       const count = cloudCounts?.[name];
 
-      // генеруємо <span class="count"> лише якщо count > 0
       const countHTML = (count && count > 0)
         ? ` <span class="count">(${count} шт.)</span>`
         : '';

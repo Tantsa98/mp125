@@ -376,8 +376,12 @@ body{
   padding-left: 25px;
 }
 
-/* Стилі для кнопки "Назад" */
+#videoBtn {
+  margin-top: 14px;
+}
 
+/* Стилі для кнопки "Назад" */
+/*
 .back-icon {
   display: inline-flex;
   align-items: center;
@@ -386,11 +390,11 @@ body{
   width: 42px;
   height: 42px;
 
-  background: rgba(0, 0, 0, 0.6); /* тактичний темний фон */
-  border: 2px solid var(--yellow); /* жовта обводка */
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--yellow);
   border-radius: 10px;
 
-  color: var(--accent); /* помаранчева стрілка */
+  color: var(--accent);
   font-size: 26px;
   font-weight: 700;
 
@@ -399,16 +403,58 @@ body{
   transition: 0.2s;
 }
 
-/* Стрілка */
 .back-icon::before {
-  content: "⟵"; /* красивий символ повернення */
+  content: "⟵";
   line-height: 1;
 }
 
-/* Ховер — яскравіший стиль */
 .back-icon:hover {
-  background: rgba(253, 137, 6, 0.2); /* легкий помаранчевий ефект */
-  border-color: var(--accent);        /* помаранчева обводка */
+  background: rgba(253, 137, 6, 0.2);
+  border-color: var(--accent); 
   transform: translateX(-2px);
+}
+*/
+/* ========================================= */
+/*           BACK BUTTON (MINIMAL)           */
+/* ========================================= */
+
+.back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+
+  color: var(--accent);
+  font-size: 22px;
+  font-weight: 600;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+/* Стрілка */
+.back-icon::before {
+  content: "←";
+  line-height: 1;
+}
+
+/* Hover */
+.back-icon:hover {
+  background: rgba(253, 137, 6, 0.12);
+  border-color: var(--accent);
+  transform: translateX(-3px);
+}
+
+/* Active (натискання) */
+.back-icon:active {
+  transform: translateX(-1px) scale(0.96);
 }
 

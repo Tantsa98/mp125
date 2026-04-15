@@ -8,17 +8,19 @@ export async function onRequestPost(context) {
       return new Response("Missing data", { status: 400 });
     }
 
-    const savedCode = await env.CODES.get(email);
+    const saved = await env.CODEST.get(email);
 
-    if (!savedCode || savedCode !== code) {
+    if (!saved || saved !== code) {
       return new Response("Invalid code", { status: 401 });
     }
 
-    // 🔐 простий токен (потім замінимо на JWT)
     const token = btoa(email + ":" + Date.now());
 
-    return new Response(JSON.stringify({ token }), {
-      headers: { "Content-Type": "application/json" }
+    return new Response(JSON.stringify({ success: true }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": `auth=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
+      }
     });
 
   } catch (err) {
