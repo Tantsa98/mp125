@@ -3,7 +3,6 @@
 
   const categoryLabel = document.documentElement.getAttribute('data-category')
     || document.body.getAttribute('data-category') || '';
-
   const pageKey = (document.body.dataset.page || '').trim();
 
   const filtersRoot = document.getElementById('filters');
@@ -17,7 +16,7 @@
   const mAff = document.getElementById('mAff');
   const mDesc = document.getElementById('mDesc');
 
-  const videoBtn = document.getElementById('videoBtn');
+  const videoBtn = document.getElementById('videoBtn'); // 🔥 НОВЕ
 
   const prevBtn = document.getElementById('prevImg');
   const nextBtn = document.getElementById('nextImg');
@@ -31,29 +30,11 @@
   let mediaIndex = null;
   let cloudCounts = null;
 
-  // ---------------------- HELPERS ----------------------
-  function getCountHTML(value){
-    if (value === undefined || value === null) return '';
-
-    if (String(value).trim().toLowerCase() === 'нз') {
-      return ` <span class="count">(На замовлення)</span>`;
-    }
-
-    const num = Number(value);
-
-    if (!Number.isNaN(num) && num > 0) {
-      return ` <span class="count">(${num} шт.)</span>`;
-    }
-
-    return '';
-  }
-
   // ---------------------- MEDIA INDEX ----------------------
   async function loadMediaIndex(){
     if (mediaIndex) return mediaIndex;
-
     try {
-      const res = await fetch('data/media-index.json', { cache: "no-store" });
+      const res = await fetch('data/media-index.json', {cache: "no-store"});
       mediaIndex = await res.json();
       return mediaIndex;
     } catch (e){
@@ -65,30 +46,21 @@
 
   async function findMediaByImgId(imgId){
     const all = await loadMediaIndex();
-
     if(!imgId) return [];
-
     return all.filter(name => name.startsWith(imgId + "#"));
   }
 
   // ---------------------- CLOUD COUNTS ----------------------
   async function loadCloudCounts(){
     try {
-      const res = await fetch(
-        'https://old-fog-c80a.tantsa98.workers.dev',
-        { cache: "no-store" }
-      );
-
+      const res = await fetch('https://old-fog-c80a.tantsa98.workers.dev', {cache: "no-store"});
       if(!res.ok) throw new Error('Cloudflare response not ok');
-
       const j = await res.json();
-
       if(pageKey && j && j[pageKey]){
         cloudCounts = j[pageKey];
       } else {
         cloudCounts = null;
       }
-
     } catch (e){
       console.warn("Не вдалося підвантажити дані з Cloudflare:", e);
       cloudCounts = null;
@@ -108,15 +80,17 @@
 
   async function openModal(item){
     const name = item.Name || '';
-    const count = cloudCounts?.[name];
+    mName.textContent = name;
 
-    mName.innerHTML = `${name}${getCountHTML(count)}`;
+    if (cloudCounts && cloudCounts[name] > 0) {
+      mName.innerHTML = `${name} <span class="count">(${cloudCounts[name]} шт.)</span>`;
+    }
 
     mType.textContent = item.Type || '';
     mAff.textContent = item.Affiliation || '';
     mDesc.textContent = item.Desc || '';
 
-    // VIDEO
+    // 🔥 ВІДЕО ЛОГІКА
     if (videoBtn) {
       const videoId = (item.videoId || '').trim();
 
@@ -132,10 +106,9 @@
     }
 
     const imgId = (item.imgId || '').trim();
-
     currentImages = await findMediaByImgId(imgId);
-    currentIndex = 0;
 
+    currentIndex = 0;
     updateCarousel();
     setOverlayVisible(true);
   }
@@ -144,11 +117,9 @@
     if(!currentImages.length){
       carouselEl.replaceWith(carouselEl.cloneNode());
       carouselEl = document.getElementById('carouselImg');
-
       imgCount.textContent = '0 / 0';
       prevBtn.style.display = 'none';
       nextBtn.style.display = 'none';
-
       return;
     }
 
@@ -175,33 +146,20 @@
     carouselEl.replaceWith(newEl);
     carouselEl = newEl;
 
-    imgCount.textContent =
-      (currentIndex + 1) + ' / ' + currentImages.length;
-
-    prevBtn.style.display =
-      currentImages.length > 1 ? 'block' : 'none';
-
-    nextBtn.style.display =
-      currentImages.length > 1 ? 'block' : 'none';
+    imgCount.textContent = (currentIndex+1)+' / '+currentImages.length;
+    prevBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
+    nextBtn.style.display = currentImages.length > 1 ? 'block' : 'none';
   }
 
   function prevImage(){
     if(!currentImages.length) return;
-
-    currentIndex =
-      (currentIndex - 1 + currentImages.length) %
-      currentImages.length;
-
+    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
     updateCarousel();
   }
 
   function nextImage(){
     if(!currentImages.length) return;
-
-    currentIndex =
-      (currentIndex + 1) %
-      currentImages.length;
-
+    currentIndex = (currentIndex + 1) % currentImages.length;
     updateCarousel();
   }
 
@@ -215,7 +173,7 @@
         <button class="modal-close">×</button>
 
         <div style="position:relative;padding-top:56.25%;">
-          <iframe
+          <iframe 
             src="https://iframe.videodelivery.net/${videoId}"
             style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
             allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
@@ -238,57 +196,39 @@
     };
   }
 
-  // ---------------------- FILTERS ----------------------
+  // ---------------------- FILTERS + GALLERY ----------------------
   function renderFilters(types){
     if(!filtersRoot) return;
-
     filtersRoot.innerHTML = '';
-
     if(!types.length){
-      filtersRoot.innerHTML =
-        '<p class="muted">Немає варіантів</p>';
+      filtersRoot.innerHTML = '<p class="muted">Немає варіантів</p>';
       return;
     }
 
     const frag = document.createDocumentFragment();
-
     types.forEach(t => {
-      const id = 'f_' + t.replace(/\s+/g,'_');
-
+      const id = 'f_'+t.replace(/\s+/g,'_');
       const label = document.createElement('label');
-
-      label.innerHTML =
-        `<input type="checkbox" value="${t}" id="${id}"> ${t}`;
-
+      label.innerHTML = `<input type="checkbox" value="${t}" id="${id}"> ${t}`;
       frag.appendChild(label);
     });
-
     filtersRoot.appendChild(frag);
   }
 
   function getSelectedTypes(){
     if(!filtersRoot) return [];
-
-    return Array.from(
-      filtersRoot.querySelectorAll('input:checked')
-    ).map(i => i.value);
+    return Array.from(filtersRoot.querySelectorAll('input:checked')).map(i => i.value);
   }
 
   function filterByTypes(data, selected){
     if(!selected.length) return data;
-
-    return data.filter(d =>
-      selected.includes(d.Type)
-    );
+    return data.filter(d => selected.includes(d.Type));
   }
 
-  // ---------------------- GALLERY ----------------------
   function renderGallery(data){
     galleryRoot.innerHTML = '';
-
     if(!data.length){
-      galleryRoot.innerHTML =
-        '<p class="muted">Нічого не знайдено.</p>';
+      galleryRoot.innerHTML = '<p class="muted">Нічого не знайдено.</p>';
       return;
     }
 
@@ -298,24 +238,24 @@
       const name = item.Name || '';
       const count = cloudCounts?.[name];
 
-      const card = document.createElement('div');
+      const countHTML = (count && count > 0)
+        ? ` <span class="count">(${count} шт.)</span>`
+        : '';
 
+      const card = document.createElement('div');
       card.className = 'card-item';
       card.tabIndex = 0;
       card.setAttribute('role','button');
       card.dataset.imgId = item.imgId || '';
 
       card.innerHTML = `
-        <h3>${name}${getCountHTML(count)}</h3>
+        <h3>${name}${countHTML}</h3>
         <p class="type">${item.Type}</p>
       `;
 
       card.addEventListener('click', () => openModal(item));
-
       card.addEventListener('keydown', e => {
-        if(e.key === 'Enter'){
-          openModal(item);
-        }
+        if(e.key === 'Enter') openModal(item);
       });
 
       frag.appendChild(card);
@@ -327,86 +267,48 @@
   // ---------------------- INIT ----------------------
   async function init(){
     let all = [];
-
-    if(window.App &&
-       typeof window.App.loadCSV === 'function'){
+    if(window.App && typeof window.App.loadCSV === 'function'){
       all = await window.App.loadCSV();
     }
 
     await loadCloudCounts();
 
     categoryData = all.filter(it =>
-      (it.Affiliation || '')
-        .trim()
-        .toLowerCase()
-        .includes(
-          (categoryLabel || '')
-            .trim()
-            .toLowerCase()
-        )
+      (it.Affiliation || '').trim().toLowerCase()
+        .includes((categoryLabel || '').trim().toLowerCase())
     );
 
-    const types = [
-      ...new Set(
-        categoryData
-          .map(d => d.Type)
-          .filter(Boolean)
-      )
-    ];
+    const types = [...new Set(categoryData.map(d => d.Type).filter(Boolean))];
 
     renderFilters(types);
     renderGallery(categoryData);
   }
 
-  // ---------------------- EVENTS ----------------------
-  function attachEvents(){
-
+  attachEvents();
+  async function attachEvents(){
     if(filtersRoot){
       filtersRoot.addEventListener('change', () => {
         const selected = getSelectedTypes();
-
-        renderGallery(
-          filterByTypes(categoryData, selected)
-        );
+        renderGallery(filterByTypes(categoryData, selected));
       });
     }
 
     if(clearBtn){
       clearBtn.addEventListener('click', () => {
-
-        Array.from(
-          filtersRoot.querySelectorAll('input')
-        ).forEach(i => i.checked = false);
-
+        Array.from(filtersRoot.querySelectorAll('input')).forEach(i => i.checked = false);
         renderGallery(categoryData);
       });
     }
 
-    if(closeModal){
-      closeModal.addEventListener(
-        'click',
-        () => setOverlayVisible(false)
-      );
-    }
+    if(closeModal) closeModal.addEventListener('click', () => setOverlayVisible(false));
+    if(overlay) overlay.addEventListener('click', e => {
+      if(e.target === overlay) setOverlayVisible(false);
+    });
 
-    if(overlay){
-      overlay.addEventListener('click', e => {
-        if(e.target === overlay){
-          setOverlayVisible(false);
-        }
-      });
-    }
-
-    if(prevBtn){
-      prevBtn.addEventListener('click', prevImage);
-    }
-
-    if(nextBtn){
-      nextBtn.addEventListener('click', nextImage);
-    }
+    if(prevBtn) prevBtn.addEventListener('click', prevImage);
+    if(nextBtn) nextBtn.addEventListener('click', nextImage);
   }
 
-  attachEvents();
   init();
 
 })();
