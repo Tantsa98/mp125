@@ -4,11 +4,22 @@ export async function onRequestPost(context) {
   try {
     const { email, code } = await request.json();
 
+    // 🔥 ВСТАВИТИ СЮДИ
+    console.log("EMAIL RAW:", email);
+    console.log("EMAIL LENGTH:", email.length);
+    console.log("EMAIL CHARS:", [...email].map(c => c.charCodeAt(0)));
+
     if (!email || !code) {
       return new Response("Missing data", { status: 400 });
     }
 
     const saved = await env.CODES.get(email);
+
+    // 🔥 І СЮДИ
+    console.log("SAVED FROM KV:", saved);
+    console.log("CODE FROM USER:", code);
+    console.log("CODE LENGTH:", code.length);
+    console.log("EQUAL:", saved === code);
 
     if (!saved || saved !== code) {
       return new Response("Invalid code", { status: 401 });
