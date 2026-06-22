@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-  <title id="pageTitle"></title>
-
+  <title>Довідник БК</title>
   <link rel="stylesheet" href="style.css" />
 
   <style>
@@ -54,20 +52,16 @@
 
   <!-- CONTENT -->
   <header class="topbar">
-
-    <h1 class="logo" id="pageHeader"></h1>
+    <h1 class="logo">Довідник БК</h1>
 
     <!-- 🔥 ОНОВЛЕНА КНОПКА -->
     <button class="logout-btn" onclick="App.logout()">
       Вийти
     </button>
-
   </header>
 
   <main class="center">
-
     <div class="grid-3">
-
       <a class="card big" href="rozvidka.html">
         <h2>Mavic/Autel</h2>
       </a>
@@ -79,22 +73,14 @@
       <a class="card big" href="fpv.html">
         <h2>FPV</h2>
       </a>
-
     </div>
-
   </main>
 
   <footer class="footer">
     <small>Власність 125 ОВМБр</small>
   </footer>
 
-  <script src="main.js"></script>
-  <script src="config.js"></script>
-
   <script>
-    document.getElementById("pageTitle").textContent = CONFIG.indexTitle;
-    document.getElementById("pageHeader").textContent = CONFIG.indexTitle;
-
     document.addEventListener("DOMContentLoaded", () => {
       const splash = document.getElementById("splash");
 
@@ -117,5 +103,6 @@
     });
   </script>
 
+  <script src="main.js"></script>
 </body>
 </html>

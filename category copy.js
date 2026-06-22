@@ -74,9 +74,8 @@
   // ---------------------- CLOUD COUNTS ----------------------
   async function loadCloudCounts(){
     try {
-
       const res = await fetch(
-        CONFIG.cloudflareWorker,
+        'https://old-fog-c80a.tantsa98.workers.dev',
         { cache: "no-store" }
       );
 
