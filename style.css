@@ -380,40 +380,6 @@ body{
   margin-top: 14px;
 }
 
-/* Стилі для кнопки "Назад" */
-/*
-.back-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 42px;
-  height: 42px;
-
-  background: rgba(0, 0, 0, 0.6);
-  border: 2px solid var(--yellow);
-  border-radius: 10px;
-
-  color: var(--accent);
-  font-size: 26px;
-  font-weight: 700;
-
-  text-decoration: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.back-icon::before {
-  content: "⟵";
-  line-height: 1;
-}
-
-.back-icon:hover {
-  background: rgba(253, 137, 6, 0.2);
-  border-color: var(--accent); 
-  transform: translateX(-2px);
-}
-*/
 /* ========================================= */
 /*           BACK BUTTON (MINIMAL)           */
 /* ========================================= */
