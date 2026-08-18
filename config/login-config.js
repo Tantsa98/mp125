@@ -1,7 +1,7 @@
 export const CONFIG = {
 
   /*Середовище "prod" "test"*/
-  ENV:"test",
+  ENV:"prod",
 
   /*OTP*/
   otpTtl:180,
