@@ -131,7 +131,8 @@ export const ROLES = {
         "tacmed",
         "conceal",
         "general",
-        "a2"
+        "a2",
+        "delta"
       ]
 
     }
