@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../config/access-client.js"></script>
+
+</head>
+
+<body class="page-models3d">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <a
+      href="/"
+      class="back-icon"
+      title="На головну">
+    </a>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+      Вийти
+    </button>
+
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- Access denied -->
+    <section
+      id="accessDenied"
+      class="panel hidden">
+
+      <h2>
+        🔒 Недостатньо прав
+      </h2>
+
+      <p>
+        У вас недостатньо прав для перегляду цього модуля.
+      </p>
+
+      <p>
+        Якщо ви вважаєте, що це помилка —
+        зверніться до адміністратора.
+      </p>
+
+    </section>
+      <!-- SIDEBAR -->
+
+    <aside
+      id="moduleSidebar"
+      class="sidebar hidden">
+
+      <div class="panel">
+
+        <h3>Пошук</h3>
+
+        <input
+          id="searchInput"
+          class="search-input"
+          type="text"
+          placeholder="Назва або категорія">
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Автори</h3>
+
+        <div
+          id="authorFilters"
+          class="filters">
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Категорії</h3>
+
+        <div
+          id="categoryFilters"
+          class="filters">
+        </div>
+
+      </div>
+
+    </aside>
+
+      <!-- CONTENT -->
+
+      <section
+        id="moduleContent"
+        class="content hidden">
+
+        <div
+          id="resultsInfo"
+          class="results-info">
+        </div>
+
+        <section
+          id="articles"
+          class="articles-list">
+        </section>
+
+      </section>
+
+
+  </main>
+
+  <footer class="footer">
+    <small>Власність 125 ОВМБр</small>
+  </footer>
+
+  <script src="../data/models3d/models-data.js"></script>
+
+  <script src="models3d.js"></script>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById("pageHeader");
+
+    document.title =
+      CONFIG.models3dTitle;
+
+    pageHeader.textContent =
+      CONFIG.models3dTitle;
+
+  </script>
+
+</body>
+</html>

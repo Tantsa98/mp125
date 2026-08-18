@@ -1,0 +1,101 @@
+PROJECT
+
+bk/
+	bombers.html
+	category.js
+	fpv.html
+	index.html
+	main.js
+	rozvidka.html
+config/
+    access-client.js
+	config.js
+	env-config.js
+	login-config.js
+css/
+	style.css
+data/
+	bk/
+		BK.csv
+		media-index.json
+	knowledge/
+		knowledge-data.js
+	models3d/
+		models-data.js
+documentation/
+	architecture.md
+	current.md
+	questions.md
+	roles.md
+	structure.md
+	to-do.md
+functions/
+    _lib/
+        access.js
+        auth.js
+	api/
+		logout.js
+        me.js
+		send-code.js
+		verify-code.js
+	[[path]].js
+knowledge/
+	text/
+		1.html
+		2.html
+		3.html
+		...
+	article.html
+	article.js
+	index.html
+	knowledge.js
+models3d/
+	index.html
+	model.html
+	model.js
+	models3d.js
+review/
+	index.html
+index.html
+login.html
+logo.ico
+logo.webp
+new-logo.png
+README.md
+
+
+R2
+
+bk-media/
+	bk/
+		bombers/
+		fpv/
+		rozvidka/
+	knowledge/
+		1/
+			files/
+			photos/
+		2/
+			files/
+			photos/
+		3/
+			files/
+			photos/
+		...
+	models3d/
+		1/
+			preview.webp
+			files/
+			photos/
+			models/
+		2/
+			preview.webp
+			files/
+			photos/
+			models/
+		3/
+			preview.webp
+			files/
+			photos/
+			models/
+		...

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../config/access-client.js"></script>
+</head>
+
+<body class="page-knowledge">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <a
+      href="/"
+      class="back-icon"
+      title="На головну">
+    </a>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+      Вийти
+    </button>
+
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="panel">
+
+        <h3>Пошук</h3>
+
+        <input
+          id="searchInput"
+          class="search-input"
+          type="text"
+          placeholder="Назва або категорія">
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Автори</h3>
+
+        <div
+          id="authorFilters"
+          class="filters">
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Категорії</h3>
+
+        <div
+          id="categoryFilters"
+          class="filters">
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- CONTENT -->
+    <section class="content">
+
+      <div
+        id="resultsInfo"
+        class="results-info">
+      </div>
+
+      <section
+        id="articles"
+        class="articles-list">
+      </section>
+
+    </section>
+
+  </main>
+
+  <script src="../data/knowledge/knowledge-data.js"></script>
+  <script src="knowledge.js"></script>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById("pageHeader");
+
+    document.title =
+      CONFIG.knowledgeTitle;
+
+    pageHeader.textContent =
+      CONFIG.knowledgeTitle;
+
+  </script>
+
+</body>
+</html>

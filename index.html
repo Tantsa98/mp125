@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>125 ОВМБр</title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/config/env-config.js"></script>
+    <script src="/config/config.js"></script>
+    <script src="/config/access-client.js"></script>
+</head>
+
+<body>
+
+<div id="splashScreen" class="splash-screen" style="display:none;">
+
+    <div class="splash-content">
+
+        <img
+            src="/new-logo.png"
+            alt="125 ОВМБр"
+            class="splash-logo">
+
+        <div class="splash-title-main">
+            125 ОВМБр
+        </div>
+
+        <div class="splash-title">
+            Viribus unitis
+        </div>
+
+        <div class="splash-loader">
+            <div class="loader-bar"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="app" style="display:none;">
+
+    <header class="page-header">
+
+        <div>
+            <h1>125 ОВМБр</h1>
+            <p>Спільними зусиллями</p>
+        </div>
+
+        <button onclick="Access.logout()">
+            Вийти
+        </button>
+
+    </header>
+
+    <main>
+
+        <div id="modules" class="module-grid">
+
+        </div>
+
+        <div id="emptyState" style="display:none;">
+            У вас немає доступних модулів.
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const modules = [
+
+    {
+        title: "База БК",
+        description: "Mavic, FPV та Бомбери",
+        href: "/bk/",
+        permission: PERMISSIONS.MODULE_BK
+    },
+
+    {
+        title: "База знань",
+        description: "Навчальні матеріали",
+        href: "/knowledge/",
+        permission: PERMISSIONS.MODULE_KNOWLEDGE
+    },
+
+    {
+        title: "База 3D моделей",
+        description: "Перегляд моделей",
+        href: "/models3d/",
+        permission: PERMISSIONS.MODULE_MODELS3D
+    },
+
+    {
+        title: "База відгуків",
+        description: "Аналіз та відгуки",
+        href: "/reviews/",
+        permission: PERMISSIONS.MODULE_REVIEWS
+    }
+
+];
+
+
+(async function () {
+
+    await Access.ready();
+
+    await showSplashIfNeeded();
+
+    renderModules();
+
+})();
+
+
+
+function renderModules() {
+
+    const container = document.getElementById("modules");
+
+    const empty = document.getElementById("emptyState");
+
+    container.innerHTML = "";
+
+    let count = 0;
+
+    modules.forEach(module => {
+
+        if (!Access.hasPermission(module.permission))
+            return;
+
+        count++;
+
+        const card = document.createElement("a");
+
+        card.className = "module-card";
+
+        card.href = module.href;
+
+        card.innerHTML = `
+
+            <h2>${module.title}</h2>
+
+            <p>${module.description}</p>
+
+        `;
+
+        container.appendChild(card);
+
+    });
+
+    if (count === 0) {
+
+        empty.style.display = "block";
+
+    }
+
+}
+
+async function showSplashIfNeeded() {
+
+    const app = document.getElementById("app");
+
+    if (sessionStorage.getItem("showSplash") !== "1") {
+
+        app.style.display = "";
+
+        return;
+
+    }
+
+    sessionStorage.removeItem("showSplash");
+
+    const splash = document.getElementById("splashScreen");
+
+    splash.style.display = "flex";
+
+    await new Promise(resolve => setTimeout(resolve, 1800));
+
+    splash.style.opacity = "0";
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    splash.remove();
+
+    app.style.display = "";
+
+}
+
+</script>
+
+</body>
+</html>

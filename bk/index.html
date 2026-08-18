@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../config/access-client.js"></script>
+</head>
+
+<body class="page-root">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <a
+      href="/"
+      class="back-icon"
+      title="На головну">
+    </a>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+      Вийти
+    </button>
+
+  </header>
+
+  <!-- CONTENT -->
+  <main class="center">
+
+    <!-- Access denied -->
+    <section
+      id="accessDenied"
+      class="panel hidden">
+
+      <h2>
+        🔒 Недостатньо прав
+      </h2>
+
+      <p>
+        У вас недостатньо прав для перегляду цього модуля.
+      </p>
+
+      <p>
+        Якщо ви вважаєте, що це помилка —
+        зверніться до адміністратора.
+      </p>
+
+    </section>
+
+    <!-- Module content -->
+    <div
+      id="moduleContent"
+      class="grid-3">
+
+      <a
+        class="card big"
+        href="rozvidka.html">
+
+        <h2>Mavic/Autel</h2>
+
+      </a>
+
+      <a
+        class="card big"
+        href="bombers.html">
+
+        <h2>Бомбери</h2>
+
+      </a>
+
+      <a
+        class="card big"
+        href="fpv.html">
+
+        <h2>FPV</h2>
+
+      </a>
+
+      <a
+        class="card big"
+        href="kamikazeWing.html">
+
+        <h2>Крило камікадзе</h2>
+
+      </a>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <small>Власність 125 ОВМБр</small>
+  </footer>
+
+  <script src="main.js"></script>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById("pageHeader");
+
+    document.title =
+      CONFIG.indexTitle;
+
+    pageHeader.textContent =
+      CONFIG.indexTitle;
+
+    (async () => {
+
+        await Access.ready();
+
+        const moduleContent =
+          document.getElementById("moduleContent");
+
+        const accessDenied =
+          document.getElementById("accessDenied");
+
+        if (!Access.hasPermission(PERMISSIONS.MODULE_BK)) {
+
+          moduleContent.classList.add("hidden");
+          accessDenied.classList.remove("hidden");
+
+          return;
+
+        }
+
+    })();
+
+  </script>
+
+</body>
+</html>
