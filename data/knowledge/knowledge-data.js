@@ -70,8 +70,12 @@ const KNOWLEDGE = [
     ],
     photos: [
       {
-        title: "",
-        file: ""
+        title: "Схема керування FPV",
+        file: "1.1_control_scheme.webp"
+      },
+      {
+        title: "Схема роботи відеосигналу FPV",
+        file: "1.2_video_signal_scheme.webp"
       }
     ],
     videos: [
