@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../config/access-client.js"></script>
+</head>
+
+<body class="page-reviews">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <a
+      href="/"
+      class="back-icon"
+      title="На головну">
+    </a>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+      Вийти
+    </button>
+
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <!-- Access denied -->
+    <section
+      id="accessDenied"
+      class="panel hidden">
+
+      <h2>
+        🔒 Недостатньо прав
+      </h2>
+
+      <p>
+        У вас недостатньо прав для перегляду цього модуля.
+      </p>
+
+      <p>
+        Якщо ви вважаєте, що це помилка —
+        зверніться до адміністратора.
+      </p>
+
+    </section>
+
+    <!-- Module content -->
+    <section
+      id="moduleContent">
+
+      <h2>
+        🚧 Модуль знаходиться у розробці
+      </h2>
+
+      <p class="lead">
+        Незабаром тут буде доступний каталог відгуків.
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <small>Власність 125 ОВМБр</small>
+  </footer>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById("pageHeader");
+
+    document.title =
+      CONFIG.reviewsTitle;
+
+    pageHeader.textContent =
+      CONFIG.reviewsTitle;
+
+    (async () => {
+
+      await Access.ready();
+
+      const moduleContent =
+        document.getElementById("moduleContent");
+
+      const accessDenied =
+        document.getElementById("accessDenied");
+
+      if (!Access.hasPermission(PERMISSIONS.MODULE_REVIEWS)) {
+
+        moduleContent.classList.add("hidden");
+        accessDenied.classList.remove("hidden");
+
+        return;
+
+      }
+
+    })();
+
+  </script>
+
+</body>
+</html>

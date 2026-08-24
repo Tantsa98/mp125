@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="uk">
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link
+    rel="stylesheet"
+    href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+
+  <script src="../config/config.js"></script>
+
+  <script src="../config/access-client.js"></script>
+
+  <!-- model-viewer -->
+  <script
+    type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+
+</head>
+
+<body class="page-models3d">
+
+  <!-- HEADER -->
+
+  <header class="topbar">
+
+    <button
+      id="backButton"
+      class="back-icon"
+      title="Назад">
+    </button>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+
+      Вийти
+
+    </button>
+
+  </header>
+
+  <!-- MAIN -->
+
+  <main class="container">
+
+    <!-- ACCESS DENIED -->
+
+    <section
+    id="accessDenied"
+    class="panel hidden">
+
+    <h2>
+        🔒 Недостатньо прав
+    </h2>
+
+    <p>
+        У вас недостатньо прав для перегляду цієї моделі.
+    </p>
+
+    </section>
+
+    <section id="moduleContent" class="content hidden">
+
+      <!-- TITLE -->
+
+      <h2 id="contentTitle">
+      </h2>
+
+      <!-- INFO -->
+
+      <div id="contentInfo" class="article-info"></div>
+
+      <!-- DESCRIPTION -->
+
+      <section
+        id="contentBody"
+        class="panel">
+      </section>
+
+      <!-- MODELS -->
+
+      <section
+        id="modelsSection"
+        class="panel hidden">
+
+        <h3>
+          3D моделі
+        </h3>
+
+        <div
+          id="contentModels" class="models-list">
+        </div>
+
+      </section>
+
+      <!-- PHOTOS -->
+
+      <section
+        id="photosSection"
+        class="panel hidden">
+
+        <h3>
+          Фото
+        </h3>
+
+        <div
+          id="contentPhotos"
+          class="gallery">
+        </div>
+
+      </section>
+
+      <!-- FILES -->
+
+      <section
+        id="filesSection"
+        class="panel hidden">
+
+        <h3>
+          Документи
+        </h3>
+
+        <div
+          id="contentFiles">
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+
+    <small>
+
+        Власність 125 ОВМБр
+
+    </small>
+
+  </footer>
+
+    <!-- PHOTO VIEWER -->
+
+    <div
+    id="photoViewer"
+    class="overlay hidden">
+
+    <div class="photo-modal">
+
+        <button
+        id="photoClose"
+        class="modal-close">
+
+        ×
+
+        </button>
+
+        <div class="carousel">
+
+        <img
+            id="photoImage"
+            alt="Фото">
+
+        </div>
+
+        <div
+        id="photoCaption"
+        class="small">
+        </div>
+
+        <div
+        class="photo-controls">
+
+        <button
+            id="photoPrev"
+            class="carousel-btn">
+
+            ←
+
+        </button>
+
+        <span
+            id="photoCounter"
+            class="photo-counter">
+
+            1 / 1
+
+        </span>
+
+        <button
+            id="photoNext"
+            class="carousel-btn">
+
+            →
+
+        </button>
+
+        </div>
+
+    </div>
+
+    </div>
+
+  <!-- MODEL VIEWER -->
+
+  <div
+    id="modelViewerOverlay"
+    class="overlay hidden">
+
+    <div class="viewer-modal">
+
+      <div class="viewer-header">
+
+        <h3
+          id="modelTitle">
+        </h3>
+
+        <button
+          id="modelClose"
+          class="modal-close">
+
+          ×
+
+        </button>
+
+      </div>
+
+      <div class="viewer-body">
+
+        <model-viewer
+
+          id="modelViewer"
+
+          camera-controls
+          auto-rotate
+
+          touch-action="pan-y"
+
+          shadow-intensity="1"
+          exposure="1"
+
+          interaction-prompt="none"
+
+          camera-orbit="45deg 75deg auto"
+          field-of-view="30deg"
+
+          min-camera-orbit="auto auto auto"
+          max-camera-orbit="auto auto auto"
+
+          loading="eager"
+
+          reveal="auto">
+
+        </model-viewer>
+
+      </div>
+
+      <div class="viewer-actions">
+
+        <button
+          id="downloadModel"
+          class="hidden">
+
+          Завантажити
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../data/models3d/models-data.js"></script>
+
+  <script src="model.js"></script>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById(
+        "pageHeader"
+      );
+
+    document.title =
+      CONFIG.models3dTitle;
+
+    pageHeader.textContent =
+      CONFIG.models3dTitle;
+
+  </script>
+
+</body>
+
+</html>

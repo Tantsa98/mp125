@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <script src="../config/env-config.js"></script>
+  <script src="../config/config.js"></script>
+  <script src="../config/access-client.js"></script>
+
+</head>
+
+<body class="page-knowledge">
+
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <button
+      id="backButton"
+      class="back-icon"
+      title="Назад">
+    </button>
+
+    <h1
+      class="logo"
+      id="pageHeader">
+    </h1>
+
+    <button
+      class="logout-btn"
+      onclick="Access.logout()">
+      Вийти
+    </button>
+
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+
+    <section class="content">
+
+      <!-- ARTICLE TITLE -->
+      <h2 id="contentTitle">
+      </h2>
+
+      <!-- ARTICLE CONTENT -->
+      <section
+        id="contentBody"
+        class="panel">
+      </section>
+
+      <!-- PHOTOS -->
+      <section
+        id="photosSection"
+        class="panel hidden">
+
+        <h3>Фото</h3>
+
+        <div
+          id="contentPhotos"
+          class="gallery">
+        </div>
+
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section
+        id="filesSection"
+        class="panel hidden">
+
+        <h3>Документи</h3>
+
+        <div
+          id="contentFiles">
+        </div>
+
+      </section>
+
+      <!-- VIDEOS -->
+      <section
+        id="videosSection"
+        class="panel hidden">
+
+        <h3>Відео</h3>
+
+        <div
+          id="contentVideos">
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- PHOTO VIEWER -->
+
+  <div
+    id="photoViewer"
+    class="overlay hidden">
+
+    <div class="photo-modal">
+
+      <button
+        id="photoClose"
+        class="modal-close">
+
+        ×
+
+      </button>
+
+      <div class="carousel">
+
+        <img
+          id="photoImage"
+          alt="Фото">
+
+      </div>
+
+      <div
+        id="photoCaption"
+        class="small">
+      </div>
+
+      <div
+        class="photo-controls">
+
+        <button
+          id="photoPrev"
+          class="carousel-btn">
+
+          ←
+
+        </button>
+
+        <span
+          id="photoCounter"
+          class="photo-counter">
+
+          1 / 1
+
+        </span>
+
+        <button
+          id="photoNext"
+          class="carousel-btn">
+
+          →
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- VIDEO VIEWER -->
+
+  <div
+    id="videoViewer"
+    class="overlay hidden">
+
+    <div class="video-modal">
+
+      <button
+        id="videoClose"
+        class="modal-close">
+
+        ×
+
+      </button>
+
+      <div
+        class="video-container">
+
+        <iframe
+          id="videoFrame"
+          allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+
+      </div>
+
+      <div
+        id="videoCaption"
+        class="small">
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../data/knowledge/knowledge-data.js"></script>
+
+  <script src="article.js"></script>
+
+  <script>
+
+    const pageHeader =
+      document.getElementById("pageHeader");
+
+    document.title =
+      CONFIG.knowledgeTitle;
+
+    pageHeader.textContent =
+      CONFIG.knowledgeTitle;
+
+  </script>
+
+</body>
+</html>
