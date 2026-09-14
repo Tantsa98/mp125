@@ -356,10 +356,6 @@ const KNOWLEDGE = [
     contentFile: "8.html",
     files: [
       {
-        title: "Вхід в систему FA",
-        file: "fa_login.pdf"
-      },
-      {
         title: "FA: Вхід та верифікація події 'Виконане завдання БпЛА'",
         file: "fa_login_flight_verification.pdf"
       }
@@ -368,7 +364,7 @@ const KNOWLEDGE = [
     ],
     videos: [
       {
-        title: "Вхід в систему FA",
+        title: "Вхід в систему та короткий огляд користувацького інтерфейсу",
         file: "40dcdecef15db3e09ebae54775d4b601"
       },
       {
