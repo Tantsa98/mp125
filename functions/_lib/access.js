@@ -79,6 +79,20 @@ export const ROLES = {
 
   },
 
+  dutybk: {
+
+    permissions: [
+      "*"
+    ],
+
+    knowledge: {
+
+      categories: "*"
+
+    }
+
+  },
+
 
   pilot: {
 

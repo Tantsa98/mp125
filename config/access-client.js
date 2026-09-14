@@ -320,6 +320,15 @@ const Access = {
 
   },
 
+  isDutyBk() {
+
+    return (
+      this.user?.role ===
+      "dutybk"
+    );
+
+  },
+
   isPilot() {
 
     return (
