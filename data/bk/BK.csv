@@ -91,4 +91,4 @@ ID,Name,Type,Affiliation,Desc,imgId,videoId
 90,"Вогнегасник-5",Вогнегасник,bombers,"Загальна вага - 5 кг",poroshok55,8cebebb01b68974382309b571ed00ebb
 91,Ф-3,Фугасний,kamikazeWing,"Загальна вага - 3 кг, ВР - С-4",fugaswing3,
 92,ФК-3,Фугасно-кумулятивний,kamikazeWing,"Загальна вага - 3 кг, ВР - С-4",fkwing3,
-93,О-3,Осколковий,kamikazeWing,"Загальна вага - 3 кг",oskolokwing3
+93,Осколок-3,Осколковий,kamikazeWing,"Загальна вага - 3 кг",oskolokwing3
