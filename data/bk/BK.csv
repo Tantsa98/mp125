@@ -94,3 +94,4 @@ ID,Name,Type,Affiliation,Desc,imgId,videoId
 91,Ф-3,Фугасний,kamikazeWing,"Загальна вага - 3 кг, ВР - С-4",fugaswing3,
 92,ФК-3,Фугасно-кумулятивний,kamikazeWing,"Загальна вага - 3 кг, ВР - С-4",fkwing3,
 93,Осколок-3,Осколковий,kamikazeWing,"Загальна вага - 3 кг",oskolokwing3,
+94,МАБ-Л3.0О,Осколковий,kamikazeWing,"Загальна вага - 3 кг, ВР - ТГА",mabl30o,
